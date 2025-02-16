@@ -25,11 +25,6 @@ export default function HomeScreen() {
       name: "Amoxicillin",
       dosage: "500",
     },
-    {
-      id: "2",
-      name: "Lisinopril",
-      dosage: "10",
-    },
   ];
 
   const router = useRouter();
@@ -56,7 +51,7 @@ export default function HomeScreen() {
       >
         <Pressable
           style={styles.backButton}
-          onPress={() => router.replace("/(tabs)")}
+          onPress={() => router.replace("/(tabs)/doctorHome")}
         >
           <Ionicons name="chevron-back" size={24} color="white" />
           <Text style={styles.backText}>Back</Text>

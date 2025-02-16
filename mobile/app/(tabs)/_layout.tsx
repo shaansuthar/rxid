@@ -2,8 +2,11 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet } from "react-native";
+import { useAuthStore } from "../../store/auth";
 
 export default function TabLayout() {
+  const userRole = useAuthStore((state) => state.userRole);
+
   return (
     <Tabs
       screenOptions={{
@@ -34,16 +37,31 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="patientHome"
         options={{
-          tabBarIcon: ({ size, color, focused }) => (
+          href: userRole === "patient" ? undefined : null,
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
-              name="home"
-              size={focused ? size + 4 : size}
+              name={userRole === "patient" ? "home" : "home-outline"}
+              size={size}
               color={color}
-              style={focused ? styles.activeIcon : undefined}
             />
           ),
+          tabBarLabel: "Home",
+        }}
+      />
+      <Tabs.Screen
+        name="doctorHome"
+        options={{
+          href: userRole === "doctor" ? undefined : null,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name={userRole === "doctor" ? "home" : "home-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+          tabBarLabel: "Home",
         }}
       />
       <Tabs.Screen

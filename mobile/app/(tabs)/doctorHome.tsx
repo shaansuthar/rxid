@@ -47,7 +47,7 @@ export default function HomeScreen() {
       const unsubscribe = onValue(stateRef, (snapshot) => {
         const state = snapshot.val();
         if (state === 0) {
-          router.push("/(tabs)/doctorHome");
+          router.push("/(tabs)/patientDisplay");
           // Clean up listener
           unsubscribe();
         }

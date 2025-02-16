@@ -1,8 +1,15 @@
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useState, useEffect } from 'react';
-import { ref, onValue } from 'firebase/database';
-import { database as db } from '../../firebase';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TextInput,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import { ref, onValue } from "firebase/database";
+import { database as db } from "../../firebase";
 import {
   ProfileInfo,
   MedicalInfo,
@@ -11,7 +18,8 @@ import {
   initialMedicalInfo,
   initialEmergencyContacts,
   DB_PATHS,
-} from '../../store/dbInfo';
+} from "../../store/dbInfo";
+import { TouchableOpacity } from "react-native";
 
 export default function ProfileScreen() {
   const [profileInfo, setProfileInfo] =
@@ -21,6 +29,8 @@ export default function ProfileScreen() {
   const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContacts>(
     initialEmergencyContacts
   );
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedInfo, setEditedInfo] = useState(profileInfo);
 
   useEffect(() => {
     const profileRef = ref(db, DB_PATHS.PROFILE_INFO);
@@ -52,20 +62,100 @@ export default function ProfileScreen() {
     };
   }, []);
 
+  const toggleEdit = () => {
+    if (isEditing) {
+      // Reset edited info when canceling edit
+      setEditedInfo(profileInfo);
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const splitName = (fullName: string) => {
+    const match = fullName.match(/^(\S+)\s+(.+)$/);
+    if (match) {
+      return {
+        firstName: match[1],
+        lastName: match[2],
+      };
+    }
+    return {
+      firstName: fullName,
+      lastName: "",
+    };
+  };
+
+  const renderEditableText = (
+    value: string | number,
+    style: any,
+    field?: string
+  ) => {
+    const stringValue = String(value);
+    if (isEditing) {
+      return (
+        <TextInput
+          style={[
+            style,
+            styles.input,
+            // Keep white text for header items when editing
+            (field === "name" || field === "email") && {
+              color: "#0A2463",
+              backgroundColor: "white",
+            },
+          ]}
+          defaultValue={stringValue}
+          placeholder={stringValue}
+          placeholderTextColor="#8D99AE"
+          onChangeText={(text) => {
+            if (field === "name") {
+              const { firstName, lastName } = splitName(text);
+              setEditedInfo((prev) => ({
+                ...prev,
+                FirstName: firstName,
+                LastName: lastName,
+              }));
+            } else if (field === "email") {
+              setEditedInfo((prev) => ({
+                ...prev,
+                Email: text,
+              }));
+            }
+          }}
+        />
+      );
+    }
+    return <Text style={style}>{stringValue}</Text>;
+  };
+
+  const renderStaticText = (value: string | number, style: any) => {
+    return <Text style={style}>{String(value)}</Text>;
+  };
+
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.editButton}>
+        <TouchableOpacity onPress={toggleEdit}>
+          <Ionicons
+            name={isEditing ? "checkmark-circle" : "pencil"}
+            size={24}
+            color="#0A2463"
+          />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.header}>
         <View style={styles.profileHeader}>
           <Image
             source={{
-              uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+              uri: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
             }}
             style={styles.profileImage}
           />
-          <Text style={styles.name}>
-            {`${profileInfo.FirstName} ${profileInfo.LastName}`}
-          </Text>
-          <Text style={styles.subtitle}>{profileInfo.Email}</Text>
+          {renderEditableText(
+            `${profileInfo.FirstName} ${profileInfo.LastName}`,
+            styles.name,
+            "name"
+          )}
+          {renderEditableText(profileInfo.Email, styles.subtitle, "email")}
         </View>
       </View>
 
@@ -76,25 +166,21 @@ export default function ProfileScreen() {
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Date of Birth</Text>
-                <Text style={styles.infoValue}>{profileInfo.DOB}</Text>
+                {renderEditableText(profileInfo.DOB, styles.infoValue)}
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Blood Type</Text>
-                <Text style={styles.infoValue}>{medicalInfo.BloodType}</Text>
+                {renderStaticText(medicalInfo.BloodType, styles.infoValue)}
               </View>
             </View>
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Height</Text>
-                <Text
-                  style={styles.infoValue}
-                >{`${medicalInfo.Height} cm`}</Text>
+                {renderStaticText(`${medicalInfo.Height} cm`, styles.infoValue)}
               </View>
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Weight</Text>
-                <Text
-                  style={styles.infoValue}
-                >{`${medicalInfo.Weight} kg`}</Text>
+                {renderStaticText(`${medicalInfo.Weight} kg`, styles.infoValue)}
               </View>
             </View>
           </View>
@@ -108,15 +194,18 @@ export default function ProfileScreen() {
                 <Ionicons name="person" size={24} color="#0A2463" />
               </View>
               <View style={styles.contactInfo}>
-                <Text style={styles.contactName}>
-                  {`${emergencyContacts.FirstName} ${emergencyContacts.LastName}`}
-                </Text>
-                <Text style={styles.contactRelation}>
-                  {emergencyContacts.Relation}
-                </Text>
-                <Text style={styles.contactPhone}>
-                  {emergencyContacts.Phone}
-                </Text>
+                {renderEditableText(
+                  `${emergencyContacts.FirstName} ${emergencyContacts.LastName}`,
+                  styles.contactName
+                )}
+                {renderEditableText(
+                  emergencyContacts.Relation,
+                  styles.contactRelation
+                )}
+                {renderEditableText(
+                  emergencyContacts.Phone,
+                  styles.contactPhone
+                )}
               </View>
             </View>
           </View>
@@ -138,7 +227,7 @@ export default function ProfileScreen() {
             <View style={styles.doctorInfo}>
               <Image
                 source={{
-                  uri: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+                  uri: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                 }}
                 style={styles.doctorImage}
               />
@@ -156,15 +245,15 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FF',
+    backgroundColor: "#F5F7FF",
   },
   header: {
-    backgroundColor: '#0A2463',
+    backgroundColor: "#0A2463",
     padding: 20,
     paddingTop: 60,
   },
   profileHeader: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   profileImage: {
     width: 100,
@@ -174,13 +263,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    fontFamily: 'SpaceGrotesk-Bold',
-    color: 'white',
+    fontFamily: "SpaceGrotesk-Bold",
+    color: "white",
   },
   subtitle: {
     fontSize: 14,
-    fontFamily: 'SpaceGrotesk-Regular',
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontFamily: "SpaceGrotesk-Regular",
+    color: "rgba(255, 255, 255, 0.8)",
     marginTop: 5,
   },
   content: {
@@ -191,18 +280,18 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: 'SpaceGrotesk-Bold',
-    color: '#0A2463',
+    fontFamily: "SpaceGrotesk-Bold",
+    color: "#0A2463",
     marginBottom: 15,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 15,
     padding: 20,
   },
   infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 15,
   },
   infoItem: {
@@ -210,21 +299,21 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    fontFamily: 'SpaceGrotesk-Regular',
-    color: '#8D99AE',
+    fontFamily: "SpaceGrotesk-Regular",
+    color: "#8D99AE",
     marginBottom: 5,
   },
   infoValue: {
     fontSize: 16,
-    fontFamily: 'SpaceGrotesk-Medium',
-    color: '#0A2463',
+    fontFamily: "SpaceGrotesk-Medium",
+    color: "#0A2463",
   },
   contactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   contactIcon: {
-    backgroundColor: '#E6EEFF',
+    backgroundColor: "#E6EEFF",
     padding: 12,
     borderRadius: 12,
     marginRight: 15,
@@ -234,35 +323,35 @@ const styles = StyleSheet.create({
   },
   contactName: {
     fontSize: 16,
-    fontFamily: 'SpaceGrotesk-Medium',
-    color: '#0A2463',
+    fontFamily: "SpaceGrotesk-Medium",
+    color: "#0A2463",
   },
   contactRelation: {
     fontSize: 14,
-    fontFamily: 'SpaceGrotesk-Regular',
-    color: '#8D99AE',
+    fontFamily: "SpaceGrotesk-Regular",
+    color: "#8D99AE",
     marginTop: 2,
   },
   contactPhone: {
     fontSize: 14,
-    fontFamily: 'SpaceGrotesk-Medium',
-    color: '#247BA0',
+    fontFamily: "SpaceGrotesk-Medium",
+    color: "#247BA0",
     marginTop: 5,
   },
   allergyItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
   },
   allergyText: {
     fontSize: 16,
-    fontFamily: 'SpaceGrotesk-Medium',
-    color: '#0A2463',
+    fontFamily: "SpaceGrotesk-Medium",
+    color: "#0A2463",
     marginLeft: 10,
   },
   doctorInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   doctorImage: {
     width: 60,
@@ -275,19 +364,38 @@ const styles = StyleSheet.create({
   },
   doctorName: {
     fontSize: 16,
-    fontFamily: 'SpaceGrotesk-Medium',
-    color: '#0A2463',
+    fontFamily: "SpaceGrotesk-Medium",
+    color: "#0A2463",
   },
   doctorSpecialty: {
     fontSize: 14,
-    fontFamily: 'SpaceGrotesk-Regular',
-    color: '#8D99AE',
+    fontFamily: "SpaceGrotesk-Regular",
+    color: "#8D99AE",
     marginTop: 2,
   },
   doctorContact: {
     fontSize: 14,
-    fontFamily: 'SpaceGrotesk-Medium',
-    color: '#247BA0',
+    fontFamily: "SpaceGrotesk-Medium",
+    color: "#247BA0",
     marginTop: 5,
+  },
+  editButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 1,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#E6EEFF",
+    borderRadius: 4,
+    padding: 4,
+    backgroundColor: "white",
+    minHeight: 24,
+    fontSize: 16,
+    fontFamily: "SpaceGrotesk-Regular",
   },
 });

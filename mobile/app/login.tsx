@@ -15,11 +15,16 @@ import { database as db } from "../firebase";
 
 export default function SignIn() {
   const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+  const userRole = useAuthStore((state) => state.userRole);
 
   const handleSignIn = useCallback(() => {
     setAuthenticated(true);
-    router.push("/(tabs)");
-  }, [setAuthenticated]);
+    if (userRole === "patient") {
+      router.push("/(tabs)/patientHome");
+    } else {
+      router.push("/(tabs)/doctorHome");
+    }
+  }, [setAuthenticated, userRole]);
 
   const handleCreateAccount = useCallback(() => {
     setAuthenticated(true);

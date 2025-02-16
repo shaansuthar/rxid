@@ -1,6 +1,6 @@
-import { ref, get, onValue } from 'firebase/database';
-import { database as db } from '../firebase';
-import { useState, useEffect } from 'react';
+import { ref, get, onValue } from "firebase/database";
+import { database as db } from "../firebase";
+import { useState, useEffect } from "react";
 
 // Types
 export interface ProfileInfo {
@@ -30,50 +30,46 @@ export interface EmergencyContacts {
 export interface Prescriptions {
   Dose: string;
   DrugName: string;
-  Duration: string;
-  Frequency: string;
-  MG: string;
+  Quantity: string;
 }
 
 // Initial states
 export const initialProfileInfo: ProfileInfo = {
-  FirstName: '',
-  LastName: '',
-  DOB: '',
-  Email: '',
-  Phone: '',
-  Address: '',
+  FirstName: "",
+  LastName: "",
+  DOB: "",
+  Email: "",
+  Phone: "",
+  Address: "",
 };
 
 export const initialMedicalInfo: MedicalInfo = {
-  Allergies: '',
-  BloodType: '',
-  Doctor: '',
-  Height: '',
-  Weight: '',
+  Allergies: "",
+  BloodType: "",
+  Doctor: "",
+  Height: "",
+  Weight: "",
 };
 
 export const initialEmergencyContacts: EmergencyContacts = {
-  FirstName: '',
-  LastName: '',
-  Phone: '',
-  Relation: '',
+  FirstName: "",
+  LastName: "",
+  Phone: "",
+  Relation: "",
 };
 
 export const initialPrescriptions: Prescriptions = {
-  Dose: '',
-  DrugName: '',
-  Duration: '',
-  Frequency: '',
-  MG: '',
+  Dose: "",
+  DrugName: "",
+  Quantity: "",
 };
 
 // Database paths
 export const DB_PATHS = {
-  PROFILE_INFO: 'User/ProfileInfo',
-  MEDICAL_INFO: 'User/MedicalInfo',
-  EMERGENCY_CONTACTS: 'User/EmergencyContacts',
-  PRESCRIPTIONS: 'User/Prescriptions',
+  PROFILE_INFO: "User/ProfileInfo",
+  MEDICAL_INFO: "User/MedicalInfo",
+  EMERGENCY_CONTACTS: "User/EmergencyContacts",
+  PRESCRIPTIONS: "User/Prescriptions",
 } as const;
 
 // Custom hook for managing database state and listeners

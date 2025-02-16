@@ -20,6 +20,8 @@ import {
   DB_PATHS,
 } from "../../store/dbInfo";
 import { TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import { useAuthStore } from "../../store/auth";
 
 export default function ProfileScreen() {
   const [profileInfo, setProfileInfo] =
@@ -31,6 +33,7 @@ export default function ProfileScreen() {
   );
   const [isEditing, setIsEditing] = useState(false);
   const [editedInfo, setEditedInfo] = useState(profileInfo);
+  const setUserRole = useAuthStore((state) => state.setUserRole);
 
   useEffect(() => {
     const profileRef = ref(db, DB_PATHS.PROFILE_INFO);
@@ -130,6 +133,13 @@ export default function ProfileScreen() {
     return <Text style={style}>{String(value)}</Text>;
   };
 
+  const handleSignOut = () => {
+    setUserRole(null);
+    while (router.canGoBack()) {
+      router.back();
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.editButton}>
@@ -139,6 +149,12 @@ export default function ProfileScreen() {
             size={24}
             color="#0A2463"
           />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.signOutButton}>
+        <TouchableOpacity onPress={handleSignOut}>
+          <Ionicons name="arrow-back" size={24} color="#0A2463" />
         </TouchableOpacity>
       </View>
 
@@ -383,6 +399,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 40,
     right: 20,
+    zIndex: 1,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 8,
+  },
+  signOutButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
     zIndex: 1,
     backgroundColor: "white",
     borderRadius: 20,

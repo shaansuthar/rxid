@@ -1,6 +1,4 @@
-//! Placeholders not showing up, important for DOB
-
-import { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -11,9 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-} from 'react-native';
-import { router } from 'expo-router';
-import { useAuthStore } from '../store/auth';
+} from "react-native";
+import { router } from "expo-router";
+import { useAuthStore } from "../store/auth";
 
 const validateEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,22 +24,22 @@ const validatePhoneNumber = (phone: string) => {
 };
 
 const formatDate = (date: string) => {
-  if (!date) return '';
-  const [year, month, day] = date.split('-');
+  if (!date) return "";
+  const [year, month, day] = date.split("-");
   return `${month}/${day}/${year}`;
 };
 
 export default function PersonalInfo() {
   const { userRole, setUserInfo } = useAuthStore();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    dateOfBirth: '',
-    address: '',
-    specialization: '',
-    licenseNumber: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    dateOfBirth: "",
+    address: "",
+    specialization: "",
+    licenseNumber: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -49,34 +47,34 @@ export default function PersonalInfo() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = "First name is required";
     }
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = "Last name is required";
     }
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
     if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = 'Phone number is required';
+      newErrors.phoneNumber = "Phone number is required";
     } else if (!validatePhoneNumber(formData.phoneNumber)) {
-      newErrors.phoneNumber = 'Please enter a valid phone number';
+      newErrors.phoneNumber = "Please enter a valid phone number";
     }
     if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = 'Date of birth is required';
+      newErrors.dateOfBirth = "Date of birth is required";
     }
     if (!formData.address.trim()) {
-      newErrors.address = 'Address is required';
+      newErrors.address = "Address is required";
     }
 
-    if (userRole === 'doctor') {
+    if (userRole === "doctor") {
       if (!formData.specialization?.trim()) {
-        newErrors.specialization = 'Specialization is required';
+        newErrors.specialization = "Specialization is required";
       }
       if (!formData.licenseNumber?.trim()) {
-        newErrors.licenseNumber = 'License number is required';
+        newErrors.licenseNumber = "License number is required";
       }
     }
 
@@ -87,18 +85,18 @@ export default function PersonalInfo() {
   const handleSubmit = () => {
     if (validateForm()) {
       setUserInfo(formData);
-      router.push('/(tabs)');
+      router.push("/(tabs)");
     } else {
       Alert.alert(
-        'Error',
-        'Please fix the errors in the form before submitting.'
+        "Error",
+        "Please fix the errors in the form before submitting."
       );
     }
   };
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <ScrollView style={styles.scrollView}>
@@ -117,7 +115,7 @@ export default function PersonalInfo() {
                 onChangeText={(text) => {
                   setFormData({ ...formData, firstName: text });
                   if (errors.firstName) {
-                    setErrors({ ...errors, firstName: '' });
+                    setErrors({ ...errors, firstName: "" });
                   }
                 }}
                 placeholder="Enter your first name"
@@ -135,7 +133,7 @@ export default function PersonalInfo() {
                 onChangeText={(text) => {
                   setFormData({ ...formData, lastName: text });
                   if (errors.lastName) {
-                    setErrors({ ...errors, lastName: '' });
+                    setErrors({ ...errors, lastName: "" });
                   }
                 }}
                 placeholder="Enter your last name"
@@ -153,7 +151,7 @@ export default function PersonalInfo() {
                 onChangeText={(text) => {
                   setFormData({ ...formData, email: text });
                   if (errors.email) {
-                    setErrors({ ...errors, email: '' });
+                    setErrors({ ...errors, email: "" });
                   }
                 }}
                 placeholder="Enter your email"
@@ -173,7 +171,7 @@ export default function PersonalInfo() {
                 onChangeText={(text) => {
                   setFormData({ ...formData, phoneNumber: text });
                   if (errors.phoneNumber) {
-                    setErrors({ ...errors, phoneNumber: '' });
+                    setErrors({ ...errors, phoneNumber: "" });
                   }
                 }}
                 placeholder="Enter your phone number"
@@ -192,7 +190,7 @@ export default function PersonalInfo() {
                 onChangeText={(text) => {
                   setFormData({ ...formData, dateOfBirth: text });
                   if (errors.dateOfBirth) {
-                    setErrors({ ...errors, dateOfBirth: '' });
+                    setErrors({ ...errors, dateOfBirth: "" });
                   }
                 }}
                 placeholder="YYYY-MM-DD"
@@ -215,7 +213,7 @@ export default function PersonalInfo() {
                 onChangeText={(text) => {
                   setFormData({ ...formData, address: text });
                   if (errors.address) {
-                    setErrors({ ...errors, address: '' });
+                    setErrors({ ...errors, address: "" });
                   }
                 }}
                 placeholder="Enter your address"
@@ -227,7 +225,7 @@ export default function PersonalInfo() {
               )}
             </View>
 
-            {userRole === 'doctor' && (
+            {userRole === "doctor" && (
               <>
                 <View style={styles.inputGroup}>
                   <Text style={styles.label}>Specialization</Text>
@@ -240,7 +238,7 @@ export default function PersonalInfo() {
                     onChangeText={(text) => {
                       setFormData({ ...formData, specialization: text });
                       if (errors.specialization) {
-                        setErrors({ ...errors, specialization: '' });
+                        setErrors({ ...errors, specialization: "" });
                       }
                     }}
                     placeholder="Enter your specialization"
@@ -263,7 +261,7 @@ export default function PersonalInfo() {
                     onChangeText={(text) => {
                       setFormData({ ...formData, licenseNumber: text });
                       if (errors.licenseNumber) {
-                        setErrors({ ...errors, licenseNumber: '' });
+                        setErrors({ ...errors, licenseNumber: "" });
                       }
                     }}
                     placeholder="Enter your license number"
@@ -288,7 +286,7 @@ export default function PersonalInfo() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   scrollView: {
     flex: 1,
@@ -299,14 +297,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontFamily: 'Inter-Bold',
-    color: '#1f2937',
+    fontFamily: "Inter-Bold",
+    color: "#1f2937",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#6b7280',
+    fontFamily: "Inter-Regular",
+    color: "#6b7280",
     marginBottom: 32,
   },
   form: {
@@ -317,40 +315,40 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#374151',
+    fontFamily: "Inter-Medium",
+    color: "#374151",
   },
   input: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
+    fontFamily: "Inter-Regular",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
   },
   inputError: {
-    borderColor: '#ef4444',
+    borderColor: "#ef4444",
   },
   errorText: {
-    color: '#ef4444',
+    color: "#ef4444",
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
+    fontFamily: "Inter-Regular",
   },
   multilineInput: {
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   button: {
-    backgroundColor: '#2563eb',
+    backgroundColor: "#2563eb",
     padding: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 32,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontFamily: 'Inter-Medium',
+    fontFamily: "Inter-Medium",
   },
 });

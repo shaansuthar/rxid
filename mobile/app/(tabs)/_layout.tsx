@@ -86,7 +86,35 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="patientIndex"
+        name="oldPatientIndex"
+        options={{
+          tabBarIcon: ({ size, color, focused }) => (
+            <Ionicons
+              name="person"
+              size={focused ? size + 4 : size}
+              color={color}
+              style={focused ? styles.activeIcon : undefined}
+            />
+          ),
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="prescribe"
+        options={{
+          tabBarIcon: ({ size, color, focused }) => (
+            <Ionicons
+              name="person"
+              size={focused ? size + 4 : size}
+              color={color}
+              style={focused ? styles.activeIcon : undefined}
+            />
+          ),
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="patientDisplay"
         options={{
           tabBarIcon: ({ size, color, focused }) => (
             <Ionicons

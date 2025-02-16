@@ -37,7 +37,6 @@ export default function HomeScreen() {
           <View style={styles.idInfo}>
             <Text style={styles.infoLabel}>Current Medications</Text>
             <Text style={styles.infoValue}>Amoxicillin - 500mg</Text>
-            <Text style={styles.infoValue}>Lisinopril - 10mg</Text>
           </View>
           <View style={styles.idInfo}>
             <Text style={styles.infoLabel}>Allergies</Text>

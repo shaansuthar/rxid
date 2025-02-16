@@ -5,10 +5,13 @@ import {
   ScrollView,
   Image,
   Pressable,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { ref, set, onValue } from "firebase/database";
+import { database as db } from "../../firebase";
 
 export default function HomeScreen() {
   const patients = [
@@ -31,6 +34,30 @@ export default function HomeScreen() {
     // Add more patients as needed
   ];
 
+  const handleScan = async () => {
+    try {
+      // Set state to 2
+      const stateRef = ref(db, "state");
+      await set(stateRef, 2);
+
+      // Navigate to scan screen
+      router.push("/misc/scanPatient");
+
+      // Listen for state changes
+      const unsubscribe = onValue(stateRef, (snapshot) => {
+        const state = snapshot.val();
+        if (state === 0) {
+          router.push("/(tabs)/doctorHome");
+          // Clean up listener
+          unsubscribe();
+        }
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <LinearGradient
@@ -40,10 +67,7 @@ export default function HomeScreen() {
         <Text style={styles.greeting}>Dr. Doofenshmirtz</Text>
         <Text style={styles.subtitle}>Your Patients</Text>
 
-        <Pressable
-          style={styles.scanButton}
-          onPress={() => router.push("/misc/scan")}
-        >
+        <Pressable style={styles.scanButton} onPress={handleScan}>
           <Text style={styles.scanButtonText}>Scan RxID Bracelet</Text>
           <Ionicons name="scan" size={20} color="white" />
         </Pressable>

@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef } from "react";
 import { router } from "expo-router";
 
-export default function ScanScreen() {
+export default function RegisterPatientScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -61,9 +61,9 @@ export default function ScanScreen() {
         >
           <Ionicons name="scan-circle-outline" size={100} color="#0A2463" />
         </Animated.View>
-        <Text style={styles.title}>Scan RxID Bracelet</Text>
+        <Text style={styles.title}>Register RxID Bracelet</Text>
         <Text style={styles.instructions}>
-          Tap your phone against the patient's RxID bracelet to scan their
+          Tap patient's RxID bracelet against the machine to register their
           information
         </Text>
 

@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useAuthStore } from "../store/auth";
+import { ref, set, onValue } from "firebase/database";
+import { database as db } from "../firebase";
 
 const validateEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,10 +84,36 @@ export default function PersonalInfo() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateForm()) {
-      setUserInfo(formData);
-      router.push("/(tabs)");
+      try {
+        setUserInfo(formData);
+
+        // Set state to 1
+        const stateRef = ref(db, "state");
+        await set(stateRef, 1);
+
+        // Navigate to scan screen
+        router.push("/misc/registerPatient");
+
+        // Listen for state changes
+        const unsubscribe = onValue(stateRef, (snapshot) => {
+          const state = snapshot.val();
+          if (state === 0) {
+            // Route based on userRole
+            if (userRole === "patient") {
+              router.push("/(tabs)/patientHome");
+            } else {
+              router.push("/(tabs)/doctorHome");
+            }
+            // Clean up listener
+            unsubscribe();
+          }
+        });
+      } catch (error) {
+        console.error("Error:", error);
+        Alert.alert("Error", "Something went wrong. Please try again.");
+      }
     } else {
       Alert.alert(
         "Error",

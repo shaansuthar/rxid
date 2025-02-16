@@ -30,7 +30,7 @@ export interface EmergencyContacts {
 export interface Prescriptions {
   Dose: string;
   DrugName: string;
-  Quantity: string;
+  Quantity: number;
 }
 
 // Initial states
@@ -61,7 +61,7 @@ export const initialEmergencyContacts: EmergencyContacts = {
 export const initialPrescriptions: Prescriptions = {
   Dose: "",
   DrugName: "",
-  Quantity: "",
+  Quantity: 0,
 };
 
 // Database paths

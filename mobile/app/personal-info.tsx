@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import {
   View,
@@ -222,7 +223,6 @@ export default function PersonalInfo() {
                   }
                 }}
                 placeholder="YYYY-MM-DD"
-                type="date"
               />
               {errors.dateOfBirth && (
                 <Text style={styles.errorText}>{errors.dateOfBirth}</Text>

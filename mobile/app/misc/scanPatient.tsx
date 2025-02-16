@@ -9,6 +9,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef } from "react";
 import { router } from "expo-router";
+import { ref, set } from "firebase/database";
+import { database as db } from "../../firebase";
 
 export default function ScanPatientScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -48,6 +50,16 @@ export default function ScanPatientScreen() {
     outputRange: ["0deg", "360deg"],
   });
 
+  const handleCancel = async () => {
+    try {
+      await set(ref(db, "state"), 0);
+      router.push("/(tabs)/doctorHome");
+    } catch (error) {
+      console.error("Error setting state:", error);
+      router.push("/(tabs)/doctorHome");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -67,7 +79,7 @@ export default function ScanPatientScreen() {
           information
         </Text>
 
-        <Pressable style={styles.cancelButton} onPress={() => router.back()}>
+        <Pressable style={styles.cancelButton} onPress={handleCancel}>
           <Text style={styles.cancelText}>Cancel</Text>
         </Pressable>
       </View>

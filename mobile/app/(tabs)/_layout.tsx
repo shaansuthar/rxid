@@ -11,7 +11,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: {
+          ...styles.tabBar,
+          display: userRole === "doctor" ? "none" : "flex",
+        },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
             <BlurView

@@ -9,6 +9,13 @@ The system also features a smart pill dispenser that dispenses the correct dosag
 
 Additionally, doctors, EMS personnel, and other authorized healthcare professionals can update prescriptions, record new medical history, allergies, and emergency notes in a patient’s secure digital profile. These updates sync in real time, ensuring that medical records remain accurate and up to date for optimal patient care. 
 
+<div style="display: flex; justify-content: center;">
+   <img src="https://github.com/user-attachments/assets/bed6f348-64c0-40bb-9d6e-97d07f656786" alt="Image 1" width="30%">
+   <img src="https://github.com/user-attachments/assets/00ffb318-19eb-4101-9a79-182e11231e60" alt="Image 2" width="30%">
+   <img src="https://github.com/user-attachments/assets/5c054aca-a73b-42a7-b441-8a6696a1e191" alt="Image 3" width="30%">
+</div>
+
+
 ## 📽️ Demo Video
 Check out the video below to see RxID in action!
 
